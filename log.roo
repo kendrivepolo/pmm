@@ -1,0 +1,100 @@
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-11-03 17:11:57
+project --topLevelPackage tw.idv.ken.mymovies --projectName mymovies-4.0
+jpa setup --database DERBY_EMBEDDED --provider ECLIPSELINK
+entity jpa --class ~.model.Owner --testAutomatically
+field string --fieldName ownerName --column owner_name ----sizeMin 5 --sizeMax 20 --notNull
+field string --fieldName ownerID --column owner_id ----sizeMin 5 --sizeMax 10 --notNull --unique
+field string --fieldName password --column password ----sizeMin 5 --sizeMax 10 --notNull
+enum type --class ~.model.Rating
+enum constant --name G
+enum constant --name PG
+enum constant --name PG13
+enum constant --name R
+enum constant --name NC17
+enum constant --name XXX
+enum type --class ~.model.Gender
+enum constant --name Drama
+enum constant --name Comedy
+enum constant --name Romantic
+enum constant --name Action --permitReservedWords
+enum constant --name War
+enum constant --name Thrill
+enum constant --name Fantasy
+enum constant --name SciFi
+enum constant --name Horror
+enum constant --name Erotic
+enum constant --name Porn
+entity jpa --class ~.model.Studio --testAutomatically 
+field string --fieldName name --column studio_name --notNull --sizeMin 5 --sizeMax 255
+field string --fieldName url --column website_url --sizeMin 10 --sizeMax 255
+field number --fieldName filmCount --type java.lang.Integer
+enum type --class ~.model.StorageType
+enum constant --name CDR
+enum constant --name DVD
+enum constant --name BD
+enum constant --name HD
+enum type --class ~.model.MediaType
+enum constant --name AVI
+enum constant --name MPEG
+enum constant --name WMV
+enum constant --name MP4
+enum constant --name MKV
+entity jpa --class ~.model.Storage --testAutomatically 
+field string --fieldName name --notNull --sizeMax 20
+field enum --fieldName storageType --type ~.model.StorageType --enumType STRING
+entity jpa --class ~.model.MediaFile --testAutomatically
+field reference --fieldName storage --type ~.model.Storage --cardinality MANY_TO_ONE
+field enum --fieldName format --type ~.model.MediaType --enumType STRING 
+entity jpa --class ~.model.Screenshot --testAutomatically 
+field string --fieldName imageFileName --column img_file_name --sizeMax 50 --notNull
+entity jpa --class ~.model.Film --testAutomatically
+field reference --fieldName owner --type ~.model.Owner --cardinality MANY_TO_ONE --notNull
+field reference --fieldName studio --type ~.model.Studio --cardinality MANY_TO_ONE
+field string --fieldName title --sizeMax 255 --notNull
+field string --fieldName performers --sizeMax 1024
+field string --fieldName streetDate --column street_date --sizeMax 255
+field string --fieldName frontCover --column front_cover_img --sizeMax 255
+field string --fieldName backCover --column back_cover_img --sizeMax 255
+field list --fieldName mediaFiles --type ~.model.MediaFile --cardinality ONE_TO_MANY --fetch EAGER 
+field list --fieldName screenshots --type ~.model.Screenshot --cardinality ONE_TO_MANY
+field enum --fieldName rating --type ~.model.Rating
+json all
+web mvc json setup
+web mvc json all
+// script /home/ken/dev/mymovies-4.0/mymovies40.roo
+quit
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log closed at 2014-11-03 17:12:20
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-11-04 10:42:37
+focus --class ~.model.film
+field string --fieldName comment --sizeMax 32768
+field string --fieldName description --sizeMax 32768
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-11-05 16:48:59
+focus --class ~.model.Film
+help
+finder list
+exit
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log closed at 2014-11-05 17:34:01
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-11-05 18:18:19
+exit
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log closed at 2014-11-05 18:39:32
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-11-18 16:49:02
+exit
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log closed at 2014-11-18 18:49:49
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-11-20 10:03:01
+logging setup --level TRACE 
+quit
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log closed at 2014-11-20 15:55:32
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-12-11 15:52:45
+quit
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log closed at 2014-12-11 17:02:09hint
+help quit
+exit
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log closed at 2014-12-16 17:42:47
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-12-17 15:14:03
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-12-17 16:27:46
+exit
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log closed at 2014-12-17 16:31:52
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log opened at 2014-12-17 18:09:00
+hint
+exit
+// Spring Roo 1.2.5.RELEASE [rev 8341dc2] log closed at 2014-12-17 18:42:42

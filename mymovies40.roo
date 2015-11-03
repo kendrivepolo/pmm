@@ -1,0 +1,81 @@
+project --topLevelPackage tw.idv.ken.mymovies --projectName mymovies-4.0
+jpa setup --database DERBY_EMBEDDED --provider ECLIPSELINK
+
+entity jpa --class ~.model.Owner --testAutomatically
+field string --fieldName ownerName --column owner_name ----sizeMin 5 --sizeMax 20 --notNull
+field string --fieldName ownerID --column owner_id ----sizeMin 5 --sizeMax 10 --notNull --unique
+field string --fieldName password --column password ----sizeMin 5 --sizeMax 10 --notNull
+
+enum type --class ~.model.Rating
+enum constant --name G
+enum constant --name PG
+enum constant --name PG13
+enum constant --name R
+enum constant --name NC17
+enum constant --name XXX
+
+enum type --class ~.model.Gender
+enum constant --name Drama
+enum constant --name Comedy
+enum constant --name Romantic
+enum constant --name Action --permitReservedWords
+enum constant --name War
+enum constant --name Thrill
+enum constant --name Fantasy
+enum constant --name SciFi
+enum constant --name Horror
+enum constant --name Erotic
+enum constant --name Porn
+
+entity jpa --class ~.model.Studio --testAutomatically 
+field string --fieldName name --column studio_name --notNull --sizeMin 5 --sizeMax 255
+field string --fieldName url --column website_url --sizeMin 10 --sizeMax 255
+field number --fieldName filmCount --type java.lang.Integer
+
+enum type --class ~.model.StorageType
+enum constant --name CDR
+enum constant --name DVD
+enum constant --name BD
+enum constant --name HD
+
+enum type --class ~.model.MediaType
+enum constant --name AVI
+enum constant --name BLURAY
+enum constant --name DVD
+enum constant --name MKV
+enum constant --name MOV
+enum constant --name MP4
+enum constant --name MPEG
+enum constant --name RM
+enum constant --name VCD
+enum constant --name WMV
+
+entity jpa --class ~.model.Storage --testAutomatically 
+field string --fieldName name --notNull --sizeMax 20
+field enum --fieldName storageType --type ~.model.StorageType --enumType STRING
+field string --fieldName description --notNull --sizeMax 255
+
+entity jpa --class ~.model.MediaFile --testAutomatically
+field reference --fieldName storage --type ~.model.Storage --cardinality MANY_TO_ONE
+field enum --fieldName format --type ~.model.MediaType --enumType STRING 
+
+entity jpa --class ~.model.Screenshot --testAutomatically 
+field string --fieldName imageFileName --column img_file_name --sizeMax 50 --notNull
+
+entity jpa --class ~.model.Film --testAutomatically
+field reference --fieldName owner --type ~.model.Owner --cardinality MANY_TO_ONE --notNull
+field reference --fieldName studio --type ~.model.Studio --cardinality MANY_TO_ONE
+field string --fieldName title --sizeMax 255 --notNull
+field string --fieldName performers --sizeMax 1024
+field string --fieldName streetDate --column street_date --sizeMax 255
+field string --fieldName frontCover --column front_cover_img --sizeMax 255
+field string --fieldName backCover --column back_cover_img --sizeMax 255
+field list --fieldName mediaFiles --type ~.model.MediaFile --cardinality ONE_TO_MANY --fetch EAGER 
+field list --fieldName screenshots --type ~.model.Screenshot --cardinality ONE_TO_MANY
+field enum --fieldName rating --type ~.model.Rating
+field string --fieldName comment --sizeMax 32768
+field string --fieldName description --sizeMax 32768
+
+json all
+web mvc json setup
+web mvc json all
