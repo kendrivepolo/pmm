@@ -45,17 +45,11 @@ privileged aspect FilmDataOnDemand_Roo_DataOnDemand {
     
     public void FilmDataOnDemand.setComment(Film obj, int index) {
         String comment = "comment_" + index;
-        if (comment.length() > 32768) {
-            comment = comment.substring(0, 32768);
-        }
         obj.setComment(comment);
     }
     
     public void FilmDataOnDemand.setDescription(Film obj, int index) {
         String description = "description_" + index;
-        if (description.length() > 32768) {
-            description = description.substring(0, 32768);
-        }
         obj.setDescription(description);
     }
     

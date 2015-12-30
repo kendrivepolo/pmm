@@ -1,13 +1,8 @@
 package tw.idv.ken.mymovies;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.io.FileUtils;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -24,11 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import tw.idv.ken.imageencrypt.ImageEncryptorIF;
 import tw.idv.ken.mymovies.model.Film;
 import tw.idv.ken.mymovies.model.Studio;
 import tw.idv.ken.mymovies.service.FileServiceIF;
+import tw.idv.ken.mymovies.service.SearchServiceIF;
 
 @RooWebJson(jsonObject = Film.class)
 @Controller
@@ -40,6 +35,8 @@ public class FilmController {
 	private Logger Log = Logger.getLogger(FilmController.class);
 	@Autowired
 	private FileServiceIF fileService;
+	@Autowired
+	private SearchServiceIF searchService;
 	/**
 	 * ImageEncryptorIF instance to encrypt or decrypt image content.
 	 */
@@ -200,6 +197,9 @@ public class FilmController {
 			fileService.saveFilmScreenshotImages(film.getId(),
 					getByteArrayByMultipartFiles(screenshots));
 		}
+		
+		//create Lucene indexes
+		searchService.createSearchIndex(film);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json");

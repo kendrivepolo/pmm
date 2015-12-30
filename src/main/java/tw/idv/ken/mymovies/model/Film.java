@@ -2,19 +2,25 @@ package tw.idv.ken.mymovies.model;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+
 import flexjson.JSONSerializer;
+
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.persistence.Column;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Enumerated;
 import javax.persistence.Query;
+
 import org.springframework.roo.addon.json.RooJson;
 
 @RooJavaBean
@@ -63,14 +69,12 @@ public class Film {
 
     /**
      */
-    @Column(length=32768)
-    @Size(max = 32768)
+    @Lob
     private String comment;
 
     /**
      */
-    @Column(length=32768)
-    @Size(max = 32768)
+    @Lob
     private String description;
 
     /**
