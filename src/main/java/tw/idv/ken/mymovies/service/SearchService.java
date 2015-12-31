@@ -222,4 +222,12 @@ public class SearchService implements SearchServiceIF {
 		
 		return result;
 	}
+
+	@Override
+	public void reBuildSearchIndexes() {
+		List<Film> allFilms = Film.findAllFilms();
+		for (Film f : allFilms) {
+			this.createSearchIndex(f);
+		}
+	}
 }

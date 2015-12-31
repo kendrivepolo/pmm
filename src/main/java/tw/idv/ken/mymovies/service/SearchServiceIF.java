@@ -25,6 +25,7 @@ import tw.idv.ken.mymovies.model.FilmSearchResult;
  *
  */
 public interface SearchServiceIF {
+	void reBuildSearchIndexes();
     void createSearchIndex(Film film);
     List<FilmSearchResult> searchFilms(String keyword);
 }
