@@ -19,6 +19,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -32,6 +33,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -73,19 +75,13 @@ public class SearchService implements SearchServiceIF {
 	@Override
 	public void createSearchIndex(Film film) {
 		Log.info("create lucene indexes for film: " + film.getId());
-		Directory directory = null;
-		IndexWriter iwriter = null;
-		Analyzer analyzer = new CJKAnalyzer();
-		IndexWriterConfig config = new IndexWriterConfig(analyzer);
-		Path indexPath = FileSystems.getDefault().getPath(getSearchIndexPath());
+		IndexWriter iwriter = getIndexWriter();
 	    Document doc = filmToLuceneDocument(film);
 		try {
-			directory = FSDirectory.open(indexPath);
-			iwriter = new IndexWriter(directory, config);
 			iwriter.addDocument(doc);
 			iwriter.close();
 		} catch (IOException e) {
-			Log.warn("open search index path fails ! ", e);
+			Log.warn("create lucene  search index fails ! ", e);
 			return;
 		}
 	}
@@ -95,20 +91,15 @@ public class SearchService implements SearchServiceIF {
 	 * @param filmKey film key
 	 */
 	private void deleteSearchIndex(final int filmKey) {
-        IndexReader reader = null;
-        /*String indexPath =
-        		
+		IndexWriter iwriter = getIndexWriter();
+		Log.debug("delete search index for film: " + filmKey);
         try {
-        	Log.debug("delete film search index: " + filmKey);
-            reader = IndexReader.
-            reader.deleteDocuments(new Term("filmKey", ""+filmKey));
+        	iwriter.deleteDocuments(new Term("filmKey", ""+filmKey));
         } catch (Exception e) {
-            _cat.warn("Failed to delete film search index: "+filmKey);
-            throw e;
+        	Log.warn(String.format("delete search index for film(%s) fails ", filmKey), e);
         } finally {
-            if (reader != null) try {reader.close(); } catch(Exception e1) {};
+            if (iwriter != null) try {iwriter.close(); } catch(Exception e1) {};
         }
-		*/
 	}
 
 	/**
@@ -117,6 +108,21 @@ public class SearchService implements SearchServiceIF {
 	 */
 	private String getSearchIndexPath() {
 		return userdataPath + "/" +  this.SEARCH_INDEX_PATH;
+	}
+	
+	private IndexWriter getIndexWriter() {
+		Directory directory = null;
+		IndexWriter iwriter = null;
+		Analyzer analyzer = new CJKAnalyzer();
+		IndexWriterConfig config = new IndexWriterConfig(analyzer);
+		Path indexPath = FileSystems.getDefault().getPath(getSearchIndexPath());
+		try {
+			directory = FSDirectory.open(indexPath);
+			iwriter = new IndexWriter(directory, config);
+		} catch (IOException e) {
+			Log.warn("get index writer fails ! ", e);
+		}
+		return iwriter;
 	}
 	
 	private Document filmToLuceneDocument(final Film film) {
@@ -229,5 +235,11 @@ public class SearchService implements SearchServiceIF {
 		for (Film f : allFilms) {
 			this.createSearchIndex(f);
 		}
+	}
+
+	@Override
+	public void updateSearchIndex(Film film) {
+		this.deleteSearchIndex(Long.valueOf(film.getId()).intValue());
+		this.createSearchIndex(film);
 	}
 }

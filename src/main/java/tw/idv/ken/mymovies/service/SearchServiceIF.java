@@ -25,7 +25,25 @@ import tw.idv.ken.mymovies.model.FilmSearchResult;
  *
  */
 public interface SearchServiceIF {
+	/**
+	 * Create lucene indexes for all films.
+	 */
 	void reBuildSearchIndexes();
+	/**
+	 * Create lucene indexes for a film.
+	 * @param film a film
+	 */
     void createSearchIndex(Film film);
+	/**
+	 * Update lucene indexes for an existed film.
+	 * @param film a film
+	 */
+    void updateSearchIndex(Film film);
+
+    /**
+     * Search films by user specified keyword.
+     * @param keyword user specified keyword
+     * @return matched results
+     */
     List<FilmSearchResult> searchFilms(String keyword);
 }

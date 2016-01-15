@@ -62,22 +62,7 @@ privileged aspect FilmController_Roo_Controller_Json {
         }
     }
     
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = "Accept=application/json")
-    public ResponseEntity<String> FilmController.updateFromJson(@RequestBody String json, @PathVariable("id") Long id) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        try {
-            Film film = Film.fromJsonToFilm(json);
-            film.setId(id);
-            if (film.merge() == null) {
-                return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<String>(headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<String>("{\"ERROR\":"+e.getMessage()+"\"}", headers, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    
+        
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
     public ResponseEntity<String> FilmController.deleteFromJson(@PathVariable("id") Long id) {
         HttpHeaders headers = new HttpHeaders();
