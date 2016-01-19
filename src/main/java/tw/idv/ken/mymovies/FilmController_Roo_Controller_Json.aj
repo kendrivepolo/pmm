@@ -62,7 +62,6 @@ privileged aspect FilmController_Roo_Controller_Json {
         }
     }
     
-        
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
     public ResponseEntity<String> FilmController.deleteFromJson(@PathVariable("id") Long id) {
         HttpHeaders headers = new HttpHeaders();
