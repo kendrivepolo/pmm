@@ -6,18 +6,17 @@ package tw.idv.ken.mymovies.model;
 import java.util.List;
 import tw.idv.ken.mymovies.model.Film;
 import tw.idv.ken.mymovies.model.MediaFile;
-import tw.idv.ken.mymovies.model.Owner;
 import tw.idv.ken.mymovies.model.Rating;
 import tw.idv.ken.mymovies.model.Studio;
 
 privileged aspect Film_Roo_JavaBean {
     
-    public Owner Film.getOwner() {
-        return this.owner;
+    public String Film.getOwnerId() {
+        return this.ownerId;
     }
     
-    public void Film.setOwner(Owner owner) {
-        this.owner = owner;
+    public void Film.setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
     
     public Studio Film.getStudio() {

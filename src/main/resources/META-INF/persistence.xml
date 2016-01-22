@@ -6,8 +6,8 @@
         <properties>
             <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.DerbyPlatform"/>
             <!-- value="drop-and-create-tables" to build a new database on each run; value="create-tables" creates new tables if needed; value="none" makes no changes to the database -->
-            <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-            <!--<property name="eclipselink.ddl-generation" value="create-tables"/>-->
+            <!--<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>-->
+            <property name="eclipselink.ddl-generation" value="create-tables"/>
             <property name="eclipselink.application-location" value="/tmp"/>
             <property name="eclipselink.create-ddl-jdbc-file-name" value="createDDL_ddlGeneration.jdbc"/>
             <property name="eclipselink.drop-ddl-jdbc-file-name" value="dropDDL_ddlGeneration.jdbc"/>

@@ -46,7 +46,8 @@ public class LoginController {
 			Log.debug("User(" + userId + ") found");
 			if (owner.getPassword().equalsIgnoreCase(passwd)) {
 				return new ResponseEntity<String>("{\"authenticated\":"
-						+ Boolean.TRUE.toString() + "}", headers,
+						+ Boolean.TRUE.toString() + ",\"userkey\":" + 
+						owner.getId() + "}", headers,
 						HttpStatus.OK);
 			}
 			Log.debug(String.format("password not match. input(%s), in db(%s)",
@@ -54,12 +55,12 @@ public class LoginController {
 		} catch (Exception e) {
 			Log.warn("validate user fails", e);
 			return new ResponseEntity<String>("{\"authenticated\":"
-					+ Boolean.FALSE.toString() + "}", headers,
+					+ Boolean.FALSE.toString() + ",\"userkey\":-1}", headers,
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		return new ResponseEntity<String>("{\"authenticated\":"
-				+ Boolean.FALSE.toString() + "}", headers,
+				+ Boolean.FALSE.toString() + ",\"userkey\":-1}", headers,
 				HttpStatus.OK);
 	}
 	

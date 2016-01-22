@@ -31,8 +31,9 @@ public class Film {
 
     /**
      */
-    @ManyToOne
-    private Owner owner;
+	@Size(max = 255)
+	@Column(name = "owner_id")
+    private String ownerId;
 
     /**
      */

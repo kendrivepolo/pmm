@@ -28,17 +28,19 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.highlight.Fragmenter;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
@@ -46,6 +48,7 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -128,6 +131,7 @@ public class SearchService implements SearchServiceIF {
 	private Document filmToLuceneDocument(final Film film) {
 		Document doc = new Document();
         doc.add(new IntField("filmKey",film.getId().intValue(),Field.Store.YES));
+        doc.add(new StringField("ownerId", film.getOwnerId(), Field.Store.NO));
         doc.add(new StoredField("title", film.getTitle()));
         doc.add(new TextField("body", composeLuceneDocBody(film), Field.Store.YES));
 
@@ -145,8 +149,9 @@ public class SearchService implements SearchServiceIF {
 	}
 
 	@Override
-	public List<FilmSearchResult> searchFilms(String keyword) {
-		Log.info("search films by keyword: " + keyword);
+	public List<FilmSearchResult> searchFilms(String ownerId, String keyword) {
+		Log.info(String.format("search films with keyword(%s) by user(%s)",
+				keyword, ownerId));
 		List<FilmSearchResult> result = new LinkedList<>();
 		Directory directory = null;
 	    IndexSearcher isearcher = null;
@@ -158,15 +163,21 @@ public class SearchService implements SearchServiceIF {
 			directory = FSDirectory.open(indexPath);
 			ireader = DirectoryReader.open(directory);
 			isearcher = new IndexSearcher(ireader);
-			QueryParser parser = new QueryParser("body", analyzer);
-			Query query = parser.parse(keyword);
+			TermQuery ownerIdQuery = new TermQuery(new Term("ownerId", ownerId));
+			TermQuery bodyQuery = new TermQuery(new Term("body", keyword));
+			BooleanQuery.Builder builder = new BooleanQuery.Builder();
+			BooleanQuery q = builder.add(ownerIdQuery, Occur.MUST)
+					.add(bodyQuery, Occur.MUST).build();
+			/*body", analyzer);
+			Query query = parser.parse(keyword);*/
+			
 			//prepare highlighter
-			QueryScorer scorer  = new QueryScorer(query, "body");
+			QueryScorer scorer  = new QueryScorer(bodyQuery, "body");
 			Fragmenter fragmenter = new SimpleSpanFragmenter(scorer);
 			Highlighter highlighter = new Highlighter(scorer);
 			highlighter.setTextFragmenter(fragmenter);
 			
-			hits = isearcher.search(query, 50).scoreDocs;
+			hits = isearcher.search(q, 50).scoreDocs;
 			Log.info("how many matched result ? " + hits.length);
 			// Iterate through the results:
 			for (int i = 0; i < hits.length; i++) {
@@ -178,8 +189,8 @@ public class SearchService implements SearchServiceIF {
 			}
 		} catch (IOException e) {
 			Log.warn("open search index path fails ! ", e);
-		} catch (ParseException pe) {
-			Log.warn("parse query keyword fails ! ", pe);
+		/*
+			Log.warn("parse query keyword fails ! ", pe);*/
 		} finally {
 			try {
 				ireader.close();

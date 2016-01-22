@@ -41,9 +41,10 @@ public interface SearchServiceIF {
     void updateSearchIndex(Film film);
 
     /**
-     * Search films by user specified keyword.
+     * Search films by user specified keyword for his own films.
+     * @param ownerId film owner's id
      * @param keyword user specified keyword
      * @return matched results
      */
-    List<FilmSearchResult> searchFilms(String keyword);
+    List<FilmSearchResult> searchFilms(String ownerId, String keyword);
 }

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tw.idv.ken.mymovies.model.Film;
 import tw.idv.ken.mymovies.model.FilmDataOnDemand;
-import tw.idv.ken.mymovies.model.OwnerDataOnDemand;
 import tw.idv.ken.mymovies.model.Rating;
 import tw.idv.ken.mymovies.model.StudioDataOnDemand;
 
@@ -27,15 +26,13 @@ privileged aspect FilmDataOnDemand_Roo_DataOnDemand {
     private List<Film> FilmDataOnDemand.data;
     
     @Autowired
-    OwnerDataOnDemand FilmDataOnDemand.ownerDataOnDemand;
-    
-    @Autowired
     StudioDataOnDemand FilmDataOnDemand.studioDataOnDemand;
     
     public Film FilmDataOnDemand.getNewTransientFilm(int index) {
         Film obj = new Film();
         setComment(obj, index);
         setDescription(obj, index);
+        setOwnerId(obj, index);
         setPerformers(obj, index);
         setRating(obj, index);
         setStreetDate(obj, index);
@@ -51,6 +48,14 @@ privileged aspect FilmDataOnDemand_Roo_DataOnDemand {
     public void FilmDataOnDemand.setDescription(Film obj, int index) {
         String description = "description_" + index;
         obj.setDescription(description);
+    }
+    
+    public void FilmDataOnDemand.setOwnerId(Film obj, int index) {
+        String ownerId = "ownerId_" + index;
+        if (ownerId.length() > 255) {
+            ownerId = ownerId.substring(0, 255);
+        }
+        obj.setOwnerId(ownerId);
     }
     
     public void FilmDataOnDemand.setPerformers(Film obj, int index) {

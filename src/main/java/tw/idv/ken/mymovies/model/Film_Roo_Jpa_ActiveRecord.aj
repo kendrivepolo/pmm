@@ -14,7 +14,7 @@ privileged aspect Film_Roo_Jpa_ActiveRecord {
     @PersistenceContext
     transient EntityManager Film.entityManager;
     
-    public static final List<String> Film.fieldNames4OrderClauseFilter = java.util.Arrays.asList("owner", "studio", "title", "performers", "streetDate", "mediaFiles", "rating", "comment", "description");
+    public static final List<String> Film.fieldNames4OrderClauseFilter = java.util.Arrays.asList("ownerId", "studio", "title", "performers", "streetDate", "mediaFiles", "rating", "comment", "description");
     
     public static final EntityManager Film.entityManager() {
         EntityManager em = new Film().entityManager;

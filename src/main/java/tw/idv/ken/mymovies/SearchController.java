@@ -22,16 +22,19 @@ public class SearchController {
 	@Autowired
 	private SearchServiceIF searchService;
 
-	@RequestMapping(value="/{keyword}", method=RequestMethod.GET)
+	@RequestMapping(value="/{ownerId}/{keyword}", method=RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> searchFilms(@PathVariable String keyword) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json; charset=utf-8");
-        List<FilmSearchResult> result = searchService.searchFilms(conv2UTF8(keyword));
-        String jsonString = new JSONSerializer().exclude("*.class").serialize(result);
+	public ResponseEntity<String> searchFilms(@PathVariable String ownerId,
+			@PathVariable String keyword) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "application/json; charset=utf-8");
+		List<FilmSearchResult> result = searchService.searchFilms(ownerId,
+				conv2UTF8(keyword));
+		String jsonString = new JSONSerializer().exclude("*.class").serialize(
+				result);
 
-        return new ResponseEntity<String>(jsonString, headers, HttpStatus.OK);
-    }
+		return new ResponseEntity<String>(jsonString, headers, HttpStatus.OK);
+	}
 	
 	private String conv2UTF8(String source){
         String result = "";
