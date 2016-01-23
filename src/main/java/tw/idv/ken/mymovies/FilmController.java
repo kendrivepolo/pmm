@@ -51,15 +51,16 @@ public class FilmController {
 	@RequestMapping(headers = "Accept=application/json")
     @ResponseBody
 	public ResponseEntity<String> listJson(
+			@RequestParam(value = "ownerid", required = true) String ownerId, 
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = "0") int size) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json; charset=utf-8");
 		List<Film> result = new LinkedList<Film>();
 		if (page > 0 && size > 0) {
-			result = Film.loadFilmsByPage(page, size);
+			result = Film.loadFilmsByPage(ownerId, page, size);
 		} else {
-			result = Film.findAllFilms();
+			result = Film.findAllFilms(ownerId);
 		}
 		return new ResponseEntity<String>(Film.toJsonArray(result), headers,
 				HttpStatus.OK);
@@ -154,12 +155,13 @@ public class FilmController {
 	 * @throws Throwable
 	 */
 	@RequestMapping(value = "/number", method = RequestMethod.GET)
-	HttpEntity<String> getTotoalFilmNumber() throws Throwable {
+	HttpEntity<String> getTotoalFilmNumber(
+			@RequestParam(value = "ownerid", required = true) String ownerId) throws Throwable {
 		// send it back to the client
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json; charset=utf-8");
 
-		long filmNumber = Film.countFilms();
+		long filmNumber = Film.countFilms(ownerId);
 		return new ResponseEntity<String>("{\"totalFilmNumber\" : " + filmNumber
 				+ "}", headers, HttpStatus.OK);
 	}
@@ -180,6 +182,11 @@ public class FilmController {
 			film.setStudio(studio);
 			film.merge();
 		} else {
+			//we can't just go to persist because Studio in json has an invalid
+			//studio.id as -1
+			Studio nStudio = new Studio();
+			nStudio.setName(studio.getName());
+			film.setStudio(nStudio);
 			film.persist();
 		}
 

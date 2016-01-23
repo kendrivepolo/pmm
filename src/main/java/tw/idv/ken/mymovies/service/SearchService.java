@@ -164,12 +164,12 @@ public class SearchService implements SearchServiceIF {
 			ireader = DirectoryReader.open(directory);
 			isearcher = new IndexSearcher(ireader);
 			TermQuery ownerIdQuery = new TermQuery(new Term("ownerId", ownerId));
-			TermQuery bodyQuery = new TermQuery(new Term("body", keyword));
+			//TermQuery bodyQuery = new TermQuery(new Term("body", keyword));
+			QueryParser parser = new QueryParser("body", analyzer);
+			Query bodyQuery = parser.parse(keyword);
 			BooleanQuery.Builder builder = new BooleanQuery.Builder();
 			BooleanQuery q = builder.add(ownerIdQuery, Occur.MUST)
 					.add(bodyQuery, Occur.MUST).build();
-			/*body", analyzer);
-			Query query = parser.parse(keyword);*/
 			
 			//prepare highlighter
 			QueryScorer scorer  = new QueryScorer(bodyQuery, "body");
@@ -191,6 +191,9 @@ public class SearchService implements SearchServiceIF {
 			Log.warn("open search index path fails ! ", e);
 		/*
 			Log.warn("parse query keyword fails ! ", pe);*/
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			try {
 				ireader.close();

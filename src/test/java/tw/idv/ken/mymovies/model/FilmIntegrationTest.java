@@ -21,9 +21,10 @@ public class FilmIntegrationTest {
         int pageSize = 9;
         long count = Film.countFilms();
         Assert.assertTrue("There are 10 entries at least before we can do this test", count >= pageSize);
-        List<Film> result = Film.loadFilmsByPage(1, pageSize);
+        //dod use "ownerId_" + index as owner id
+        List<Film> result = Film.loadFilmsByPage("ownerId_"+1, 1, pageSize);
         Assert.assertNotNull("Load Films in the first Page illegally returned null", result);
-        Assert.assertTrue("Load Films in the first Page failed to return correct data", result.size() == pageSize);
+        Assert.assertTrue("Load Films in the first Page failed to return correct data", result.size() == 1);
     }
 	
 	@Test
