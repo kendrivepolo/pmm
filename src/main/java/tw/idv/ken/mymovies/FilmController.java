@@ -67,12 +67,19 @@ public class FilmController {
 	}
 	
 	@RequestMapping(value = "/{id}/cover", method = RequestMethod.GET)
-	HttpEntity<byte[]> loadCoverImage(@PathVariable Long id) throws Throwable {
+	HttpEntity<byte[]> loadCoverImage(@PathVariable Long id,
+			@RequestParam(value = "x", required = false, defaultValue = "1") int x,
+			@RequestParam(value = "y", required = false, defaultValue = "1") int y) throws Throwable {
+		byte[] imgByteArray = null;
 		// send it back to the client
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.IMAGE_JPEG);
 
-		byte[] imgByteArray = fileService.getFilmCoverImage(id);
+		if(x > 0 && y > 0) {
+			imgByteArray = fileService.getFilmCoverImage(id ,x , y);
+		} else {
+		    imgByteArray = fileService.getFilmCoverImage(id);
+		}
 		if (imgByteArray != null && imgByteArray.length > 0) {
 			return new ResponseEntity<byte[]>(imgByteArray, httpHeaders,
 					HttpStatus.OK);

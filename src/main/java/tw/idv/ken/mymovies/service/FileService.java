@@ -3,11 +3,17 @@
  */
 package tw.idv.ken.mymovies.service;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -135,6 +141,13 @@ public class FileService implements FileServiceIF {
 	}
 
 	@Override
+	public byte[] getFilmCoverImage(long filmID,int x, int y) {
+		String coverImagePath = getFilmImagePath(filmID, false)
+				+ "/" + COVER_IMAGE_NAME;
+		return getCroppedImage(coverImagePath, x, y);
+	}
+
+	@Override
 	public String[] getFilmScreenshotFilenames(long filmID) {
 		String screenshotImageFolder = getFilmScreenshotImagesPath(filmID, false);
 		File dir = new File(screenshotImageFolder);
@@ -171,6 +184,61 @@ public class FileService implements FileServiceIF {
 			}
 		}
 		return null;
+	}
+	
+	private byte[] getCroppedImage(final String imageFilePath, int xRatio, int yRatio) {
+		File imageFile = new File(imageFilePath);
+		byte[] imgByteArray = null;
+		//x position of original images to crop image
+		int xPos = 0;
+		//y position of original images to crop image
+		int yPos = 0;
+		//width of the cropped image
+		int width = 0;
+		//height of cropped image
+		int height = 0;
+		//width of the original image
+		int oWidth = 0;
+		//height of the original image
+		int oHeight = 0;
+		
+		
+		if (!imageFile.exists())
+			return null;
+
+		try {
+			imgByteArray = FileUtils.readFileToByteArray(imageFile);
+			ByteArrayInputStream bais = new ByteArrayInputStream(
+					imageEncryptor.decrypt(imgByteArray));
+			BufferedImage oImg = ImageIO.read(bais);
+		    oWidth = oImg.getWidth();
+			oHeight = oImg.getHeight();
+			
+			double targetRatio = xRatio / ((double) yRatio);
+			double originalRation = oWidth / ((double) oHeight);
+			
+			if (targetRatio > originalRation) { // keep width unchanged
+				width = oWidth;
+				height = (new Double(oWidth / targetRatio)).intValue();
+			} else {
+				width = (new Double(oHeight * targetRatio)).intValue();
+				height = oHeight;
+			}
+			
+			xPos = (new Double(oWidth / 2.0d - width / 2.0d)).intValue();
+			yPos = (new Double(oHeight / 2.0d - height / 2.0d)).intValue();
+			
+			BufferedImage nImg = oImg.getSubimage(xPos, yPos, width, height);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write( nImg, "jpg", baos );
+			baos.flush();
+			byte[] imageInByte = baos.toByteArray();
+			baos.close();
+			return imageInByte;
+		} catch (IOException e) {
+			Log.error("read image fails !", e);
+			return null;
+		}
 	}
 
 	@Override

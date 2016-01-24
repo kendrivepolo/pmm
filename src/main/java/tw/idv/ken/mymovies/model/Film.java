@@ -84,14 +84,40 @@ public class Film {
      * @param pageSize how many films in a page
      * @return a list of Film instances
      */
-	public static List<Film> loadFilmsByPage(int pageNumber, int pageSize) {
-		Query query = entityManager().createQuery("SELECT F From Film F ORDER BY F.id DESC");
+	public static List<Film> loadFilmsByPage(String ownerId, int pageNumber, int pageSize) {
+		Query query = entityManager().createQuery("SELECT F From Film F WHERE F.ownerId = :ownerId ORDER BY F.id DESC");
+		query.setParameter("ownerId", ownerId);
 		query.setFirstResult((pageNumber-1) * pageSize);
 		query.setMaxResults(pageSize);
 		@SuppressWarnings("unchecked")
 		List <Film> films = query.getResultList();
         return films;
     }
+	
+	/**
+	 * Find all films owned by a specific user.
+	 * @param ownerId an user id
+	 * @return a list of Film instances
+	 */
+	public static List<Film> findAllFilms(String ownerId) {
+		return entityManager()
+				.createQuery("SELECT o FROM Film o WHERE o.ownerId = :ownerId",
+						Film.class).setParameter("ownerId", ownerId)
+				.getResultList();
+	}
+	
+	/**
+	 * Count the number of owned films of a specific user.
+	 * @param ownerId an user id
+	 * @return the number of films
+	 */
+	public static long countFilms(String ownerId) {
+		return entityManager()
+				.createQuery(
+						"SELECT COUNT(o) FROM Film o WHERE o.ownerId = :ownerId",
+						Long.class).setParameter("ownerId", ownerId)
+				.getSingleResult();
+	}
 
 	public String getDescription() {
         return (this.description != null) ? this.description.trim() : "";

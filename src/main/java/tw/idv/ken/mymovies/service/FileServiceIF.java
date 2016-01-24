@@ -65,6 +65,15 @@ public interface FileServiceIF {
 	 * @return cover image as byte array
 	 */
 	byte[] getFilmCoverImage(final long filmID);
+
+	/**
+	 * Get cropped cover image of a film by x:y ratio.
+	 * @param filmID film id
+	 * @param x horizontal ratio
+ 	 * @param y vertical ratio
+	 * @return cover image as byte array
+	 */
+	byte[] getFilmCoverImage(final long filmID,final int x, final int y);
 	
 	/**
 	 * Get a screenshot image of a film.
