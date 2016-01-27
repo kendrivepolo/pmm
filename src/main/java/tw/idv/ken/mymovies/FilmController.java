@@ -182,7 +182,7 @@ public class FilmController {
 		Film film = Film.fromJsonToFilm(json);
 		Studio studio = film.getStudio();
 
-		if (studio != null && studio.getId() > 0) {
+		/*if (studio != null && studio.getId() > 0) {
 			studio = Studio.findStudio(studio.getId());
 			film.setStudio(null);
 			film.persist();
@@ -194,6 +194,20 @@ public class FilmController {
 			Studio nStudio = new Studio();
 			nStudio.setName(studio.getName());
 			film.setStudio(nStudio);
+			film.persist();
+		}*/
+		if (studio != null) {
+			studio = computeStudio(studio);
+			film.setStudio(studio);
+		}
+		if (studio.getId() > 0) {
+			//save film with null studio first
+			film.setStudio(null);
+			film.persist();
+			//then set correct studio and merge modification
+			film.setStudio(studio);
+			film.merge();
+		} else {
 			film.persist();
 		}
 
@@ -224,6 +238,16 @@ public class FilmController {
 				uriBuilder.path(a.value()[0] + "/" + film.getId().toString())
 						.build().toUriString());
 		return new ResponseEntity<String>(headers, HttpStatus.CREATED);
+	}
+	
+	private Studio computeStudio(Studio studio) {
+		if (studio.getId() > 0) {
+			studio = Studio.findStudio(studio.getId());
+		} else {
+			Studio nStudio = new Studio();
+			nStudio.setName(studio.getName());
+		}
+		return studio;
 	}
 
 	/**
