@@ -89,4 +89,10 @@ public interface FileServiceIF {
 	 * @return screenshot image file names
 	 */
 	String[] getFilmScreenshotFilenames(final long filmID);
+	
+	/**
+	 * Delete folder of a film, which contains cover and screenshots.
+	 * @param filmId film id
+	 */
+	void deleteFilmFolder(final long filmId);
 }

@@ -3,6 +3,7 @@ package tw.idv.ken.mymovies;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -20,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import tw.idv.ken.imageencrypt.ImageEncryptorIF;
 import tw.idv.ken.mymovies.model.Film;
+import tw.idv.ken.mymovies.model.MediaFile;
 import tw.idv.ken.mymovies.model.Studio;
 import tw.idv.ken.mymovies.service.FileServiceIF;
 import tw.idv.ken.mymovies.service.SearchServiceIF;
@@ -311,6 +314,24 @@ public class FilmController {
             
             //update Lucene indexes
     		searchService.updateSearchIndex(film);
+            return new ResponseEntity<String>(headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<String>("{\"ERROR\":"+e.getMessage()+"\"}", headers, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteFromJson(@PathVariable("id") Long id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        try {
+            Film film = Film.findFilm(id);
+            if (film == null) {
+                return new ResponseEntity<String>(headers, HttpStatus.NOT_FOUND);
+            }
+            film.remove();
+            searchService.deleteSearchIndex(id);
+            fileService.deleteFilmFolder(id);
             return new ResponseEntity<String>(headers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<String>("{\"ERROR\":"+e.getMessage()+"\"}", headers, HttpStatus.INTERNAL_SERVER_ERROR);

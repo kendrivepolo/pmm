@@ -4,7 +4,6 @@
 package tw.idv.ken.mymovies.service;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,9 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import tw.idv.ken.imageencrypt.ImageEncryptorIF;
 
@@ -245,6 +242,17 @@ public class FileService implements FileServiceIF {
 	public byte[] getDefaultScreenshotImage() {
 		Base64 codec = new Base64();
 		return codec.decode(defaultScreenshotImageBase64);
+	}
+
+	@Override
+	public void deleteFilmFolder(long filmId) {
+		String path = userdataPath + "/" + filmId;
+		File folder = new File(path);
+		try {
+			FileUtils.deleteDirectory(folder);
+		} catch (IOException e) {
+			Log.warn("delete folder of film " + filmId + " fails", e);
+		}
 	}
 
 }

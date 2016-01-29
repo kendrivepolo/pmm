@@ -60,7 +60,7 @@ public class Film {
 
     /**
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE }, fetch = FetchType.EAGER)
     private List<MediaFile> mediaFiles = new ArrayList<MediaFile>();
 
     /**

@@ -93,16 +93,23 @@ public class SearchService implements SearchServiceIF {
 	 * Delete lucene search index of an existed film.
 	 * @param filmKey film key
 	 */
-	private void deleteSearchIndex(final int filmKey) {
+	@Override
+	public void deleteSearchIndex(final long filmId) {
 		IndexWriter iwriter = getIndexWriter();
-		Log.debug("delete search index for film: " + filmKey);
-        try {
-        	iwriter.deleteDocuments(new Term("filmKey", ""+filmKey));
-        } catch (Exception e) {
-        	Log.warn(String.format("delete search index for film(%s) fails ", filmKey), e);
-        } finally {
-            if (iwriter != null) try {iwriter.close(); } catch(Exception e1) {};
-        }
+		Log.debug("delete search index for film: " + filmId);
+		try {
+			iwriter.deleteDocuments(new Term("filmKey", "" + filmId));
+		} catch (Exception e) {
+			Log.warn(String.format("delete search index for film(%s) fails ",
+					filmId), e);
+		} finally {
+			if (iwriter != null)
+				try {
+					iwriter.close();
+				} catch (Exception e1) {
+				}
+			;
+		}
 	}
 
 	/**

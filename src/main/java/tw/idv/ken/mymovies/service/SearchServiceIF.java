@@ -47,4 +47,10 @@ public interface SearchServiceIF {
      * @return matched results
      */
     List<FilmSearchResult> searchFilms(String ownerId, String keyword);
+    
+    /**
+     * Delete Lucene search indexes of a film.
+     * @param filmId film id
+     */
+    void deleteSearchIndex(final long filmId);
 }
