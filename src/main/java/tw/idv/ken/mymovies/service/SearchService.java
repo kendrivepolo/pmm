@@ -38,6 +38,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
@@ -95,10 +96,13 @@ public class SearchService implements SearchServiceIF {
 	 */
 	@Override
 	public void deleteSearchIndex(final long filmId) {
+		int intFilmId = new Long(filmId).intValue();
 		IndexWriter iwriter = getIndexWriter();
 		Log.debug("delete search index for film: " + filmId);
+		Query query = NumericRangeQuery.newIntRange("filmKey", intFilmId,
+				intFilmId, true, true);
 		try {
-			iwriter.deleteDocuments(new Term("filmKey", "" + filmId));
+			iwriter.deleteDocuments(query);
 		} catch (Exception e) {
 			Log.warn(String.format("delete search index for film(%s) fails ",
 					filmId), e);
