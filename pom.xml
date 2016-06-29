@@ -258,7 +258,7 @@
                 <version>2.2</version>
                 <configuration>
 			<!--<webXml>target/web.xml</webXml>-->
-			<warName>${name}</warName>
+			<warName>${artifactId}</warName>
 		</configuration>
             </plugin>
             <plugin>
