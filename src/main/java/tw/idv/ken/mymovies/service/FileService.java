@@ -222,8 +222,8 @@ public class FileService implements FileServiceIF {
 				height = oHeight;
 			}
 			
-			xPos = (new Double(oWidth / 2.0d - width / 2.0d)).intValue();
-			yPos = (new Double(oHeight / 2.0d - height / 2.0d)).intValue();
+			xPos = oWidth - width;
+			yPos = 0;
 			
 			BufferedImage nImg = oImg.getSubimage(xPos, yPos, width, height);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -3,7 +3,6 @@ package tw.idv.ken.mymovies;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -21,10 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import tw.idv.ken.imageencrypt.ImageEncryptorIF;
 import tw.idv.ken.mymovies.model.Film;
-import tw.idv.ken.mymovies.model.MediaFile;
 import tw.idv.ken.mymovies.model.Studio;
 import tw.idv.ken.mymovies.service.FileServiceIF;
 import tw.idv.ken.mymovies.service.SearchServiceIF;
@@ -63,7 +60,7 @@ public class FilmController {
 		if (page > 0 && size > 0) {
 			result = Film.loadFilmsByPage(ownerId, page, size);
 		} else {
-			result = Film.findAllFilms(ownerId);
+			result = Film.findFilmsByOwner(ownerId);
 		}
 		return new ResponseEntity<String>(Film.toJsonArray(result), headers,
 				HttpStatus.OK);
@@ -185,34 +182,19 @@ public class FilmController {
 		Film film = Film.fromJsonToFilm(json);
 		Studio studio = film.getStudio();
 
-		/*if (studio != null && studio.getId() > 0) {
-			studio = Studio.findStudio(studio.getId());
-			film.setStudio(null);
-			film.persist();
-			film.setStudio(studio);
-			film.merge();
-		} else {
-			//we can't just go to persist because Studio in json has an invalid
-			//studio.id as -1
-			Studio nStudio = new Studio();
-			nStudio.setName(studio.getName());
-			film.setStudio(nStudio);
-			film.persist();
-		}*/
-		if (studio != null) {
-			studio = computeStudio(studio);
-			film.setStudio(studio);
-		}
-		if (studio.getId() > 0) {
-			//save film with null studio first
-			film.setStudio(null);
-			film.persist();
-			//then set correct studio and merge modification
-			film.setStudio(studio);
-			film.merge();
-		} else {
-			film.persist();
-		}
+        if (studio != null) {
+            studio = computeStudio(studio);
+        }
+        
+        //save film with null studio first
+        film.setStudio(null);
+        film.persist();
+        
+        if (studio.getId() > 0) {
+            // then set correct studio and merge modification
+            film.setStudio(studio);
+            film.merge();
+        }
 
 		if (coverImage != null && !coverImage.isEmpty()) {
 			try {
@@ -245,12 +227,13 @@ public class FilmController {
 	
 	private Studio computeStudio(Studio studio) {
 		if (studio.getId() > 0) {
-			studio = Studio.findStudio(studio.getId());
+			return Studio.findStudio(studio.getId());
 		} else {
 			Studio nStudio = new Studio();
 			nStudio.setName(studio.getName());
+			nStudio.persist();
+			return nStudio;
 		}
-		return studio;
 	}
 
 	/**

@@ -28,8 +28,7 @@ public class SearchController {
 			@PathVariable String keyword) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json; charset=utf-8");
-		List<FilmSearchResult> result = searchService.searchFilms(ownerId,
-				conv2UTF8(keyword));
+		List<FilmSearchResult> result = searchService.searchFilms(ownerId, keyword);
 		String jsonString = new JSONSerializer().exclude("*.class").serialize(
 				result);
 

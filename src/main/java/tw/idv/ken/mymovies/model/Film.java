@@ -99,7 +99,7 @@ public class Film {
 	 * @param ownerId an user id
 	 * @return a list of Film instances
 	 */
-	public static List<Film> findAllFilms(String ownerId) {
+	public static List<Film> findFilmsByOwner(String ownerId) {
 		return entityManager()
 				.createQuery("SELECT o FROM Film o WHERE o.ownerId = :ownerId",
 						Film.class).setParameter("ownerId", ownerId)
